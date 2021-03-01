@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<HBox fx:id="cellLayout" alignment="CENTER_LEFT" prefHeight="48.0" prefWidth="287.0" xmlns="http://javafx.com/javafx/8.0.172-ea"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.sergei4.mobile.tools.mdbgui.ui.controllers.devices.IPhoneItemCellController">
+    <children>
+        <Circle fx:id="online" pickOnBounds="true" radius="4.0">
+            <HBox.margin>
+                <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+            </HBox.margin>
+        </Circle>
+        <VBox alignment="CENTER_LEFT">
+            <children>
+                <Label fx:id="modelName" text="Device">
+                    <font>
+                        <Font name="System Bold" size="14.0"/>
+                    </font>
+                </Label>
+                <Label fx:id="osVersion" text="OS Version">
+                    <VBox.margin>
+                        <Insets top="2.0"/>
+                    </VBox.margin>
+                </Label>
+            </children>
+            <HBox.margin>
+                <Insets left="4.0"/>
+            </HBox.margin>
+        </VBox>
+    </children>
+</HBox>

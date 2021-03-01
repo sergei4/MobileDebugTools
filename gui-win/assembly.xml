@@ -1,0 +1,29 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    <id>gui-win</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>../platform-tools/windows</directory>
+            <outputDirectory>platform-tools</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../mdb-gui/target/windows</directory>
+            <outputDirectory>.</outputDirectory>
+            <excludes>
+                <exclude>MobiTools.exe</exclude>
+            </excludes>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>../mdb-gui/target/windows/MobiTools.exe</source>
+            <outputDirectory>.</outputDirectory>
+            <fileMode>0644</fileMode>
+        </file>
+    </files>
+</assembly>

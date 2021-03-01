@@ -1,0 +1,15 @@
+# Ignore idea configuration files
+/.idea/*
+*.iml
+
+# ignore builds
+target/*
+target/**
+**/target/**
+
+/logs
+/mdb-gui/logs
+/mdb-gui/devicelogs
+/mdb-gui/screenshots
+/mdb-gui/iPhoneOS.platform
+/screenshots
