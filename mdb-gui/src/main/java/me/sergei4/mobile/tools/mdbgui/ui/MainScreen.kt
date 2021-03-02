@@ -4,6 +4,8 @@ import javafx.application.Platform
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.control.Alert
+import javafx.scene.control.Dialog
 import javafx.stage.Modality
 import javafx.stage.Stage
 import me.sergei4.mobile.tools.mdbgui.MainGUI
@@ -21,7 +23,7 @@ class MainScreen(
 
         val scene = Scene(root, 1200.0, 620.0)
 
-        primaryStage.title = "MobiTool"
+        primaryStage.title = "Mobile Debug Tools"
         primaryStage.scene = scene
 
         primaryStage.width = 1400.0
@@ -47,6 +49,27 @@ class MainScreen(
             dialog.initModality(Modality.APPLICATION_MODAL)
             dialog.initOwner(primaryStage)
             dialog.showAndWait()
+        }
+    }
+
+    fun showDialog(dialog: () -> Dialog<*>) {
+        Platform.runLater {
+            dialog.invoke().apply {
+                widthProperty().addListener { _, _, _ -> x = primaryStage.x + primaryStage.width / 2 - width / 2 }
+                heightProperty().addListener { _, _, _ -> y = primaryStage.y + primaryStage.height / 2 - height / 2 }
+                initOwner(primaryStage)
+                showAndWait()
+            }
+        }
+    }
+
+    fun showAlertDialog(type: Alert.AlertType, title: String, message: String) {
+        showDialog {
+            Alert(type).apply {
+                this.title = title
+                headerText = null
+                contentText = message
+            }
         }
     }
 

@@ -1,8 +1,9 @@
 package me.sergei4.mobile.tools.mdbgui.connection
 
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
+import me.sergei4.mobile.tools.mdbgui.ErrorCodes
+import me.sergei4.mobile.tools.mdbgui.app.Result
 import me.sergei4.mobile.tools.mdbgui.os.ProcessHelper
 import java.io.File
 
@@ -52,20 +53,19 @@ class AdbHelper(private val adbExecPath: File) {
             .filter { it.isNotEmpty() }
     }
 
-    fun createScreenshot(deviceId: String, tmpFile: String): Boolean {
+    fun createScreenshot(deviceId: String, tmpFile: String): Result {
         val result = ProcessHelper.execute(composeCommand(deviceId, "adb shell screencap -p $tmpFile"))
-        return result.isEmpty()
+        return if (result.isEmpty()) Result.Success() else Result.Failed(ErrorCodes.ANDROID_CANT_CREATE_SCREENSHOT_ON_DEVICE)
     }
 
-    fun pull(deviceId: String, from: String, to: String): Boolean {
-        val result = ProcessHelper.execute(composeCommand(deviceId, "adb pull $from $to"))
-        return result.trim().contains("100%")
+    fun pull(deviceId: String, from: String, to: String): Result {
+        val result = ProcessHelper.execute(composeCommand(deviceId, "adb pull $from $to")).apply { println(this) }
+        return if(result.trim().contains("pulled")) Result.Success() else Result.Failed(ErrorCodes.ANDROID_CANT_PULL_FILE_FROM_DEVICE)
     }
 
-
-    fun rm(deviceId: String, file: String): Boolean {
+    fun rm(deviceId: String, file: String): Result {
         val result = ProcessHelper.execute(composeCommand(deviceId, "adb shell rm $file"))
-        return result.isEmpty()
+        return if (result.isEmpty()) Result.Success() else Result.Failed(ErrorCodes.ANDROID_CANT_REMOVE_FILE_ON_DEVICE)
     }
 
     fun openLangSettings(deviceId: String) {

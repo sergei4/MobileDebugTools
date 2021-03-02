@@ -1,6 +1,7 @@
 package me.sergei4.mobile.tools.mdbgui.ui.controllers.screencapture
 
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
+import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -60,11 +61,15 @@ class ScreenCaptureController : Initializable {
                 {
                     when (it.message ?: "") {
                         ErrorCodes.IPHONE_NEED_MOUNT_IMAGE -> mountIOSImage()
+                        ErrorCodes.ANDROID_CANT_CREATE_SCREENSHOT -> alertCantCreateScreenShot()
                         else -> it.printStackTrace()
                     }
                 }
             )
     }
+
+    private fun alertCantCreateScreenShot() =
+        mainScreen.showAlertDialog(Alert.AlertType.ERROR, "Screenshot", "Can't create screenshot. Please, check connection")
 
     private fun mountIOSImage() {
         Alert(Alert.AlertType.CONFIRMATION).apply {
@@ -80,11 +85,11 @@ class ScreenCaptureController : Initializable {
                     .observeOn(JavaFxScheduler.platform())
                     .subscribe(
                         {
-                            showAlertDialog(Alert.AlertType.INFORMATION, "Mount image", "Image has been mounted successful")
+                            mainScreen.showAlertDialog(Alert.AlertType.INFORMATION, "Mount image", "Image has been mounted successful")
                             mainScreen.hideBottomBar()
                         },
                         {
-                            showAlertDialog(Alert.AlertType.ERROR, "Mount image", resolveErrorMessage(it.message ?: ""))
+                            mainScreen.showAlertDialog(Alert.AlertType.ERROR, "Mount image", resolveErrorMessage(it.message ?: ""))
                             mainScreen.hideBottomBar()
                         }
                     )
@@ -99,14 +104,6 @@ class ScreenCaptureController : Initializable {
         else -> "Couldn't mount image on device. Reason is unknown"
     }
 
-    private fun showAlertDialog(type: Alert.AlertType, title: String, message: String) {
-        Alert(type).apply {
-            this.title = title
-            headerText = null
-            contentText = message
-        }.showAndWait()
-    }
-
     fun onSaveClicked() {
         currentScreenShot?.let { screenShot ->
             Thread {
@@ -119,7 +116,10 @@ class ScreenCaptureController : Initializable {
                 try {
                     val outImage =
                         Thumbnails.of(srcImage).size((srcImage.width * ratio).toInt(), (srcImage.height * ratio).toInt()).asBufferedImage();
-                    ImageIO.write(outImage, "png", snapshotFile);
+                    ImageIO.write(outImage, "png", snapshotFile)
+                    Platform.runLater {
+                        mainScreen.showAlertDialog(Alert.AlertType.INFORMATION, "Screenshot", "Screenshot saved successful.\n ${snapshotFile.name}")
+                    }
                 } catch (ex: IOException) {
                     ex.printStackTrace();
                 }

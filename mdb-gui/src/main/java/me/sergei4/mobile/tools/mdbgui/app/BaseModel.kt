@@ -5,6 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import me.sergei4.mobile.tools.mdbgui.ErrorCodes
 import me.sergei4.mobile.tools.mdbgui.app.android.ProcessHolder
 import me.sergei4.mobile.tools.mdbgui.app.model.*
 import me.sergei4.mobile.tools.mdbgui.connection.AdbHelper
@@ -120,12 +121,25 @@ class BaseModelImpl(
                 cachedDevices.find { it.id == currentDevice.id && it.connected } ?: return Single.never()
                 Single.create<ScreenShot> {
                     val tempPicture = "/sdcard/temp.png"
-                    if (!adbHelper.createScreenshot(currentDevice.id, tempPicture)) {
-                        it.onError(Error("Can't create screenshot on device"))
-                    }
                     val tmpFile = File(screenCapturePath, "temp_snapshot.png")
-                    adbHelper.pull(currentDevice.id, tempPicture, tmpFile.absolutePath)
-                    adbHelper.rm(currentDevice.id, tempPicture)
+                    adbHelper.createScreenshot(currentDevice.id, tempPicture).run {
+                        if (!success) {
+                            it.onError(Error(ErrorCodes.ANDROID_CANT_CREATE_SCREENSHOT))
+                            return@create
+                        }
+                    }
+                    adbHelper.pull(currentDevice.id, tempPicture, tmpFile.absolutePath).run {
+                        if (!success) {
+                            it.onError(Error(ErrorCodes.ANDROID_CANT_CREATE_SCREENSHOT))
+                            return@create
+                        }
+                    }
+                    adbHelper.rm(currentDevice.id, tempPicture).run {
+                        if (!success) {
+                            it.onError(Error(ErrorCodes.ANDROID_CANT_CREATE_SCREENSHOT))
+                            return@create
+                        }
+                    }
                     it.onSuccess(ScreenShot(currentDevice, tmpFile))
                 }.subscribeOn(Schedulers.io())
             }
@@ -198,7 +212,7 @@ class BaseModelImpl(
         val device = currentDeviceSbj.value!! as MobileDevice.IPhone
         if (!ideviceHelper.hasPlatformImage(iphonePlatformPath, device.iOsVersion)) {
             val result = ideviceHelper.downloadPlatformImage(iphonePlatformPath, device.iOsVersion)
-            if(!result.success) throw Error(result.errorCode)
+            if (!result.success) throw Error(result.errorCode)
         }
         val result = ideviceHelper.mountImage(device.id, iphonePlatformPath, device.iOsVersion)
         if (!result.success) throw Error(result.errorCode)

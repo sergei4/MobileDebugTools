@@ -36,9 +36,9 @@ class IdeviceHelper(private val rootPath: File) {
     fun createScreenshot(deviceId: String, outFile: String): Result {
         val result = ProcessHelper.execute(composeCommand(command = "idevicescreenshot", " -u $deviceId $outFile"))
         if (result.contains("Could not start")) {
-            return Result(false, ErrorCodes.IPHONE_NEED_MOUNT_IMAGE)
+            return Result.Failed(ErrorCodes.IPHONE_NEED_MOUNT_IMAGE)
         }
-        return Result(true)
+        return Result.Success()
     }
 
     fun hasPlatformImage(platformRootPath: File, platformCode: String): Boolean {
@@ -57,9 +57,9 @@ class IdeviceHelper(private val rootPath: File) {
                 "http://94.250.253.136:8080/iPhoneOS.platform/${getMajorPlatformCode(platformCode)}/DeveloperDiskImage.dmg.signature",
                 File(platformPath, "DeveloperDiskImage.dmg.signature")
             )
-            Result(true)
+            Result.Success()
         } catch (error: IOException) {
-            Result(false, ErrorCodes.IPHONE_IMAGE_DOWNLOAD_FAILED)
+            Result.Failed(ErrorCodes.IPHONE_IMAGE_DOWNLOAD_FAILED)
         }
 
     private fun downloadFile(url: String, dest: File) {
@@ -76,12 +76,12 @@ class IdeviceHelper(private val rootPath: File) {
         val imageFile = File(platformRootPath, "${getMajorPlatformCode(platformCode)}/DeveloperDiskImage.dmg")
         val result = ProcessHelper.execute(composeCommand(command = "ideviceimagemounter", " -u $deviceId ${imageFile.absolutePath}"))
         if (result.contains("Status: Complete")) {
-            return Result(true)
+            return Result.Success()
         }
         if (result.contains("Device is locked")) {
-            return Result(false, ErrorCodes.IPHONE_DEVICE_LOCKED)
+            return Result.Failed(ErrorCodes.IPHONE_DEVICE_LOCKED)
         }
-        return Result(false, ErrorCodes.IPHONE_MOUNT_IMAGE_FAILED)
+        return Result.Failed(ErrorCodes.IPHONE_MOUNT_IMAGE_FAILED)
     }
 
     private fun getMajorPlatformCode(platformCode: String): String {

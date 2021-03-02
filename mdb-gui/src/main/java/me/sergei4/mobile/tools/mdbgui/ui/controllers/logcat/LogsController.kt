@@ -10,12 +10,11 @@ import javafx.collections.transformation.SortedList
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
-import javafx.stage.Stage
-import javafx.stage.StageStyle
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import me.sergei4.mobile.tools.mdbgui.app.context
 import me.sergei4.mobile.tools.mdbgui.app.model.MobileDeviceLogLine
 import me.sergei4.mobile.tools.mdbgui.extentions.add
-import me.sergei4.mobile.tools.mdbgui.ui.dialogs.ProgressDialogController
 import me.sergei4.mobile.tools.mdbgui.ui.mainScreen
 import java.awt.Desktop
 import java.io.IOException
@@ -36,6 +35,9 @@ open class LogsController : Initializable {
 
     @FXML
     private lateinit var userFilter: TextField
+
+    private lateinit var startIcon: ImageView
+    private lateinit var stopIcon: ImageView
 
     private val logItemList = FXCollections.observableArrayList<MobileDeviceLogLine>()
     private val outLogItemList: FilteredList<MobileDeviceLogLine> = FilteredList(logItemList)
@@ -65,6 +67,15 @@ open class LogsController : Initializable {
     private val complexFilter = ComplexFilter()
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        startIcon = ImageView(Image(javaClass.getResourceAsStream("/images/ic_log_start.png"))).apply {
+            fitWidth = 40.0
+            fitHeight = 40.0
+        }
+        stopIcon = ImageView(Image(javaClass.getResourceAsStream("/images/ic_log_stop.png"))).apply {
+            fitWidth = 40.0
+            fitHeight = 40.0
+        }
+
         runnableProcessList.items = sortedProcessItemList
         runnableProcessList.selectionModel.selectedItemProperty()
             .addListener { _, _, newValue ->
@@ -105,7 +116,7 @@ open class LogsController : Initializable {
     }
 
     private fun stop() {
-        Platform.runLater { btnStartStop.text = "Start" }
+        Platform.runLater { btnStartStop.graphic = startIcon }
         running = false
         disposables.clear()
     }
@@ -123,10 +134,11 @@ open class LogsController : Initializable {
     @FXML
     private fun onSaveToFileClicked() {
         val device = context.model.currentDevice.blockingFirst()
-        val dialog: Stage = ProgressDialogController.createDialog("Gathering information. Please wait...")
-        dialog.initStyle(StageStyle.UNDECORATED)
-        mainScreen.showDialog(dialog)
-        MobileLogUtils.save(context, device, Observable.fromIterable(outLogItemList)) { Platform.runLater { dialog.close() } }
+        mainScreen.showProgressBottomBar("Gathering information. Please wait...")
+        MobileLogUtils.save(context, device, Observable.fromIterable(outLogItemList)) {
+            mainScreen.hideBottomBar()
+            mainScreen.showAlertDialog(Alert.AlertType.INFORMATION, "Logger", "Log successfully saved")
+        }
     }
 
     @FXML
@@ -160,7 +172,7 @@ open class LogsController : Initializable {
                 { stop() },
                 { stop() }
             ).add(disposables)
-        btnStartStop.text = "Stop"
+        btnStartStop.graphic = stopIcon
         running = true
     }
 
