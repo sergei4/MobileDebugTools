@@ -30,7 +30,7 @@ class IdeviceHelper(private val rootPath: File) {
     }
 
     fun observeDeviceLog(deviceId: String): Observable<String> =
-        ProcessHelper.observeProcess(composeCommand(command = "idevicesyslog", " -u $deviceId -d"))
+        ProcessHelper.observeProcess(composeCommand(command = "idevicesyslog", " -u $deviceId"))
             .filter { it.isNotEmpty() }
 
     fun createScreenshot(deviceId: String, outFile: String): Result {
