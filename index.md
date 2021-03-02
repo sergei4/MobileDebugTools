@@ -1,8 +1,8 @@
 ## Welcome to Mobile Debug Tools Page
 
 ### Screenshots
-![Image](https://github.com/sergei4/MobileDebugTools/blob/gh-pages/images/Screenshot%202021-03-02%20at%2009.10.00.png)
-![Image](https://github.com/sergei4/MobileDebugTools/blob/gh-pages/images/Screenshot%202021-03-02%20at%2009.10.42.png)
+![Image](/images/Screenshot%202021-03-02%20at%2009.10.00.png)
+![Image](/images/Screenshot%202021-03-02%20at%2009.10.42.png)
 
 ### Downloads
 
