@@ -1,3 +1,9 @@
+## Welcome to Mobile Degug Tools Page
+Downloads:
+
+[Windows](https://drive.google.com/file/d/1ij-kg8saGEHm6OMLi9ik4jDr4CoN4itZ/view?usp=sharing)
+[Mac](https://drive.google.com/file/d/1hwvTh7KO1c78YN-Guc8tiQq6EIIynCch/view?usp=sharing)
+
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/sergei4/MobileDebugTools/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
