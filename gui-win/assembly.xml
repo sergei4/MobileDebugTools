@@ -12,6 +12,10 @@
             <outputDirectory>platform-tools</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>../jre/windows/amazon</directory>
+            <outputDirectory>jre</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>../mdb-gui/target/windows</directory>
             <outputDirectory>.</outputDirectory>
             <excludes>

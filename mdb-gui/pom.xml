@@ -95,6 +95,7 @@
                             </classPath>
                             <jre>
                                 <minVersion>1.8.0</minVersion>
+                                <path>./jre</path>
                                 <opts>
                                     <opt>-Djava.endorsed.dirs=./endorsed</opt>
                                 </opts>
